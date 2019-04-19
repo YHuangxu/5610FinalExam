@@ -36,6 +36,7 @@ meteor npm install
 ```
 meteor
 ```
+and the program should be running at http://localhost:3000/
 
 ## Author
 
@@ -45,8 +46,8 @@ Author: [Yanwen Huangxu](https://github.com/YHuangxu)
 
 ## Features
 #### Required:
-1. search box to search for items on wiki
-2. links displayed and updated
+1. search box to search for items on wiki, contents showing on the page
+2. clickable links displayed on the side
 3. clickable search history, later histories than the clicked one will not show.
 
 #### Extras:

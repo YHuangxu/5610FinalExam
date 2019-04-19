@@ -15,9 +15,10 @@ class WikiPage extends Component {
     };
 
     this.onChange = this.onChange.bind(this);
-    this.onClick = this.onClick.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
   }
+
+
 
   onChange(e){
     this.setState(
@@ -25,10 +26,6 @@ class WikiPage extends Component {
         [e.target.id]: e.target.value
       }
     );
-  }
-
-  onClick(e) {
-    e.preventDefault();
   }
 
   onSubmit(e) {
@@ -54,17 +51,15 @@ class WikiPage extends Component {
     }
 
     if (e.target.id === "linkSearch") {
-      this.setState({
-        search: e.target.value
-      })
-      Meteor.call("wiki.getData", this.state.search, (err, res) => {
+      let newSearch = e.target.value;
+      Meteor.call("wiki.getData", newSearch, (err, res) => {
         if (err) {
           alert("There was error updating check the console");
           console.log(err);
           return;
         } else {
           let history = this.state.history;
-          history.push(this.state.search);
+          history.push(newSearch);
           console.log(res);
           this.setState({
             allData: res,
@@ -78,10 +73,8 @@ class WikiPage extends Component {
     }
 
     if (e.target.id === "historySearch") {
-      this.setState({
-        search: e.target.value
-      })
-      Meteor.call("wiki.getData", this.state.search, (err, res) => {
+      let newSearch = e.target.value;
+      Meteor.call("wiki.getData", newSearch, (err, res) => {
         if (err) {
           alert("There was error updating check the console");
           console.log(err);
@@ -90,7 +83,7 @@ class WikiPage extends Component {
           let history = this.state.history;
           let newHistory = [];
           for (var i = 0; i < history.length; i++) {
-            if (history[i] == this.state.search) {
+            if (history[i] == newSearch) {
                 newHistory = history.slice(0, i + 1);
             }
           }
@@ -116,10 +109,13 @@ class WikiPage extends Component {
     cur = cur.concat(array[array.length - 1]);
     return cur;
   }
+  getKey() {
+   return Math.random().toString(36).replace(/[^a-z]+/g, '').substr(0, 5);
+  }
 
   render() {
-    console.log("this.state.search", this.state.search);
-    console.log("this.state.allData",this.state.allData ? this.state.allData : "");
+    //console.log("this.state.search", this.state.search);
+    //console.log("this.state.allData",this.state.allData ? this.state.allData : "");
     //console.log("this.state.text", this.state.allData ? this.state.text["*"]:""); //works!
     //console.log("this.state.links", this.state.allData ? this.state.links[0]:"");
     //<a href="#Automatic_conversion_of_wikitext_with_the_pipe_trick">pipe trick</a>
@@ -127,7 +123,6 @@ class WikiPage extends Component {
     // const temp = document.createElement('div');
     // temp.innerHTML = s;
     // const htmlObject = temp.firstChild;
-    var i = 0;
     return (
       <div className = "container">
         <div className = "row">
@@ -141,23 +136,28 @@ class WikiPage extends Component {
         </div>
 
         <div className = "row">
+        <div className = "col-12">
         <h4>Search History:</h4>
           {this.state.history.map(data=>(
-            <button key ={data} id="historySearch" value={data} onClick = {this.onSubmit}> {data}</button>
+            <button key ={this.getKey()} id="historySearch" value={data} onClick = {this.onSubmit}> {data}</button>
             ))}
+          </div><br/>
         </div>
         <div className = "row">
         {!this.state.allData ? null:
          (<div className = "row">
           
           <div className = "col-4">
+           <section className="form-elegant scrollbar-light-blue">
+
           <h4>Links:</h4>
           {this.state.links.map(data=>(
-            <button key ={data["*"]} id="linkSearch" value={data["*"]} onClick = {this.onSubmit} href={this.getLink(data)}> {data["*"]}</button>
+            <button key ={this.getKey()} id="linkSearch" value={data["*"]} onClick = {this.onSubmit} href={this.getLink(data)}> {data["*"]}</button>
             ))}
+          </section>
          </div>
          <div className = "col-8">
-         <h1>{this.state.title}</h1>
+         <h1>{this.state.title}</h1><br/>
           <h4>Content:</h4>
           <div dangerouslySetInnerHTML={{__html:this.state.text["*"]}} />
           </div>

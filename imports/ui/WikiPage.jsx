@@ -10,6 +10,7 @@ class WikiPage extends Component {
     super(props);
     this.state = {
       search:"",
+      history:[]
 
     };
 
@@ -39,29 +40,66 @@ class WikiPage extends Component {
           console.log(err);
           return;
         } else {
+          let history = [];
+          history.push(this.state.search);
           this.setState({
             allData: res,
-            //title: res.title,
+            title: res.title,
             text: res.text,
-            links: res.links
+            links: res.links,
+            history: history
           })
         }
       });
     }
 
     if (e.target.id === "linkSearch") {
-      Meteor.call("wiki.getData", e.target.value, (err, res) => {
+      this.setState({
+        search: e.target.value
+      })
+      Meteor.call("wiki.getData", this.state.search, (err, res) => {
         if (err) {
           alert("There was error updating check the console");
           console.log(err);
           return;
         } else {
+          let history = this.state.history;
+          history.push(this.state.search);
           console.log(res);
           this.setState({
             allData: res,
-            //title: res.title,
+            title: res.title,
             text: res.text,
-            links: res.links
+            links: res.links,
+            history: history
+          })
+        }
+      });
+    }
+
+    if (e.target.id === "historySearch") {
+      this.setState({
+        search: e.target.value
+      })
+      Meteor.call("wiki.getData", this.state.search, (err, res) => {
+        if (err) {
+          alert("There was error updating check the console");
+          console.log(err);
+          return;
+        } else {
+          let history = this.state.history;
+          let newHistory = [];
+          for (var i = 0; i < history.length; i++) {
+            if (history[i] == this.state.search) {
+                newHistory = history.slice(0, i + 1);
+            }
+          }
+          this.setState({
+            allData: res,
+            title: res.title,
+            text: res.text,
+            links: res.links,
+            history: newHistory
           })
         }
       });
@@ -101,6 +139,13 @@ class WikiPage extends Component {
             <button type="button" className="btn btn-primary" id = "searchFor" onClick = {this.onSubmit}>search</button>
           </div> 
         </div>
+
+        <div className = "row">
+        <h4>Search History:</h4>
+          {this.state.history.map(data=>(
+            <button key ={data} id="historySearch" value={data} onClick = {this.onSubmit}> {data}</button>
+            ))}
+        </div>
         <div className = "row">
         {!this.state.allData ? null:
          (<div className = "row">
@@ -112,17 +157,13 @@ class WikiPage extends Component {
             ))}
          </div>
          <div className = "col-8">
-         <h1>{this.state.allData.title}</h1>
+         <h1>{this.state.title}</h1>
           <h4>Content:</h4>
           <div dangerouslySetInnerHTML={{__html:this.state.text["*"]}} />
           </div>
           </div>)
         }
-        
-        
         </div>
-
-
       </div>
     );
   }

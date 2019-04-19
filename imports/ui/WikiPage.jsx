@@ -41,7 +41,7 @@ class WikiPage extends Component {
         } else {
           this.setState({
             allData: res,
-            title: res.title,
+            //title: res.title,
             text: res.text,
             links: res.links
           })
@@ -49,13 +49,47 @@ class WikiPage extends Component {
       });
     }
 
+    if (e.target.id === "linkSearch") {
+      Meteor.call("wiki.getData", e.target.value, (err, res) => {
+        if (err) {
+          alert("There was error updating check the console");
+          console.log(err);
+          return;
+        } else {
+          console.log(res);
+          this.setState({
+            allData: res,
+            //title: res.title,
+            text: res.text,
+            links: res.links
+          })
+        }
+      });
+    }
+
+
+  }
+  getLink(data) {
+    let array = data["*"].split(" ");
+    let cur = "#";
+    for (var i = 0; i < array.length - 1; i++) {
+      cur= cur.concat(array[i],"_");
+    }
+    cur = cur.concat(array[array.length - 1]);
+    return cur;
   }
 
   render() {
     console.log("this.state.search", this.state.search);
     console.log("this.state.allData",this.state.allData ? this.state.allData : "");
-    console.log("this.state.text", this.state.allData ? this.state.text["*"]:"");
-    console.log("this.state.links", this.state.allData ? this.state.links:"");
+    //console.log("this.state.text", this.state.allData ? this.state.text["*"]:""); //works!
+    //console.log("this.state.links", this.state.allData ? this.state.links[0]:"");
+    //<a href="#Automatic_conversion_of_wikitext_with_the_pipe_trick">pipe trick</a>
+    // const s = this.state.text ? this.state.text["*"]:null;
+    // const temp = document.createElement('div');
+    // temp.innerHTML = s;
+    // const htmlObject = temp.firstChild;
+    var i = 0;
     return (
       <div className = "container">
         <div className = "row">
@@ -69,14 +103,23 @@ class WikiPage extends Component {
         </div>
         <div className = "row">
         {!this.state.allData ? null:
-         (<div>
-          <h1>{this.state.title}</h1>
-          <div>{this.state.text["*"]}
+         (<div className = "row">
+          
+          <div className = "col-4">
+          <h4>Links:</h4>
+          {this.state.links.map(data=>(
+            <div key ={data["*"]}><a id="linkSearch" value={data["*"]} onClick = {this.onSubmit}  href={this.getLink(data)}> {data["*"]}</a></div>
+            ))}
+         </div>
+         <div className = "col-8">
+         <h1>{this.state.allData.title}</h1>
+          <h4>Content:</h4>
+          <div dangerouslySetInnerHTML={{__html:this.state.text["*"]}} />
           </div>
           </div>)
         }
         
-
+        
         </div>
 
 

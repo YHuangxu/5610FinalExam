@@ -108,7 +108,7 @@ class WikiPage extends Component {
           <div className = "col-4">
           <h4>Links:</h4>
           {this.state.links.map(data=>(
-            <div key ={data["*"]}><a id="linkSearch" value={data["*"]} onClick = {this.onSubmit}  href={this.getLink(data)}> {data["*"]}</a></div>
+            <button key ={data["*"]} id="linkSearch" value={data["*"]} onClick = {this.onSubmit} href={this.getLink(data)}> {data["*"]}</button>
             ))}
          </div>
          <div className = "col-8">

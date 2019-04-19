@@ -16,28 +16,7 @@ class WikiPage extends Component {
     this.onChange = this.onChange.bind(this);
     this.onClick = this.onClick.bind(this);
     this.onSubmit = this.onSubmit.bind(this);
-    this.getURL = this.getURL.bind(this);
   }
-
-  // componentDidUpdate(prevProps) {
-  //   if (this.props.allPhotos != prevProps.allPhotos) {
-  //     this.updatePage();
-  //   }
-  // }
-
-  // updatePage() {
-  //   Meteor.call("photos.getData", this.state.search, (err, res) => {
-  //     if (err) {
-  //       alert("There was error updating check the console");
-  //       console.log(err);
-  //       return;
-  //     } else {
-  //       this.setState({
-  //         allPhotos:res //data.data
-  //       })
-  //     }
-  //   });
-  // }
 
   onChange(e){
     this.setState(
@@ -49,20 +28,6 @@ class WikiPage extends Component {
 
   onClick(e) {
     e.preventDefault();
-    // let info = {
-    //   name: "testDB"
-    // }
-    // if (e.target.id === "test") {
-    //   Meteor.call("photos.test", info, (err, res) => {
-    //     if (err) {
-    //       alert("There was error updating check the console");
-    //       console.log(err);
-    //       return;
-    //     } else {
-    //       console.log("succeed",res);
-    //     }
-    //   });
-    // }
   }
 
   onSubmit(e) {
@@ -75,7 +40,10 @@ class WikiPage extends Component {
           return;
         } else {
           this.setState({
-            allData:res //data.data
+            allData: res,
+            title: res.title,
+            text: res.text,
+            links: res.links
           })
         }
       });
@@ -83,22 +51,11 @@ class WikiPage extends Component {
 
   }
 
-
-  getURL(p) {
-    //return "https://farm".concat(photo.farm.toString(),".staticflickr.com/",photo.server.toString(),"/",photo.id.toString(),"_",photo.secret.toString(),"_s.jpg");
-    return "https://farm".concat(p.farm,".staticflickr.com/",p.server,"/",p.id,"_",p.secret,"_s.jpg");
-  }
-
-  //`https://farm${p.farm}.staticflickr.com/${p.server}/${p.id}_${p.secret}_s.jpg`
-  //https://farm{farm-id}.staticflickr.com/{server-id}/{id}_{secret}.jpg
-
-  // ComponentDidMount(){
-  //   this.renderPhotos();
-  // }
-
   render() {
     console.log("this.state.search", this.state.search);
     console.log("this.state.allData",this.state.allData ? this.state.allData : "");
+    console.log("this.state.text", this.state.allData ? this.state.text["*"]:"");
+    console.log("this.state.links", this.state.allData ? this.state.links:"");
     return (
       <div className = "container">
         <div className = "row">
@@ -110,6 +67,19 @@ class WikiPage extends Component {
             <button type="button" className="btn btn-primary" id = "searchFor" onClick = {this.onSubmit}>search</button>
           </div> 
         </div>
+        <div className = "row">
+        {!this.state.allData ? null:
+         (<div>
+          <h1>{this.state.title}</h1>
+          <div>{this.state.text["*"]}
+          </div>
+          </div>)
+        }
+        
+
+        </div>
+
+
       </div>
     );
   }
